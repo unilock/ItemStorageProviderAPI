@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "item_storage_provider",
+	"version": "${version}",
+	"name": "ItemStorageProviderAPI",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"unilock"
+	],
+	"contact": {
+		"sources": "https://github.com/unilock/ItemStorageProviderAPI",
+		"issues": "https://github.com/unilock/ItemStorageProviderAPI/issues"
+	},
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"cc.unilock.item_storage_provider.ItemStorageProviderAPI"
+		]
+	},
+	"depends": {
+		"fabricloader": "*",
+		"minecraft": ">=1.20",
+		"fabric-api": "*"
+	}
+}
