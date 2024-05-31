@@ -97,5 +97,70 @@ public class ItemStorageProviderAPI implements ModInitializer {
 			Items.WHITE_SHULKER_BOX,
 			Items.YELLOW_SHULKER_BOX
 		);
+
+		// TODO: Put this in a testmod
+//		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+//			dispatcher.register(CommandManager.literal("add_item")
+//				.executes(ctx -> {
+//					if (ctx.getSource().isExecutedByPlayer()) {
+//						ServerPlayerEntity player = ctx.getSource().getPlayer();
+//
+//						assert player != null;
+//
+//						ItemStack stack = player.getOffHandStack();
+//
+//						if (stack.isIn(ConventionalItemTags.SHULKER_BOXES)) {
+//							Storage<ItemVariant> storage = LOOKUP.find(stack, Unit.INSTANCE);
+//
+//							if (storage == null) {
+//								ctx.getSource().sendFeedback(() -> Text.literal("NULL STORAGE!!"), false);
+//								return -1;
+//							}
+//
+//							InventoryStorage inv = (InventoryStorage) storage;
+//
+//							try (Transaction transaction = Transaction.openOuter()) {
+//								ItemVariant resource = ItemVariant.of(Items.COBBLESTONE.getDefaultStack());
+//								long amount = inv.insert(resource, 1, transaction);
+//								transaction.commit();
+//								ctx.getSource().sendFeedback(() -> Text.literal("Inserted "+amount+" ").append(resource.getItem().getName()), false);
+//							}
+//						}
+//					}
+//
+//					return 1;
+//				}));
+//			dispatcher.register(CommandManager.literal("remove_item")
+//				.executes(ctx -> {
+//					if (ctx.getSource().isExecutedByPlayer()) {
+//						ServerPlayerEntity player = ctx.getSource().getPlayer();
+//
+//						assert player != null;
+//
+//						ItemStack stack = player.getOffHandStack();
+//
+//						if (stack.isIn(ConventionalItemTags.SHULKER_BOXES)) {
+//							Storage<ItemVariant> storage = LOOKUP.find(stack, Unit.INSTANCE);
+//
+//							if (storage == null) {
+//								ctx.getSource().sendFeedback(() -> Text.literal("NULL STORAGE!!"), false);
+//								return -1;
+//							}
+//
+//							InventoryStorage inv = (InventoryStorage) storage;
+//
+//							try (Transaction transaction = Transaction.openOuter()) {
+//								ItemVariant resource = inv.getSlot(0).getResource();
+//								long amount = inv.extract(resource, 1, transaction);
+//								transaction.commit();
+//								ctx.getSource().sendFeedback(() -> Text.literal("Extracted "+amount+" ").append(resource.getItem().getName()), false);
+//							}
+//						}
+//					}
+//
+//					return 1;
+//				}));
+//
+//		});
 	}
 }
