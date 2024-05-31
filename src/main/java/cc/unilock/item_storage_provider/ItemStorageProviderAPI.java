@@ -1,15 +1,17 @@
 package cc.unilock.item_storage_provider;
 
+import cc.unilock.item_storage_provider.mixin.BundleItemAccessor;
 import cc.unilock.item_storage_provider.util.InventoryUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.BundleItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -28,15 +30,48 @@ public class ItemStorageProviderAPI implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOOKUP.registerForItems(
-			(st, c) -> {
-				NbtCompound nbt = BlockItem.getBlockEntityNbt(st);
+			(bundle, c) -> {
+				NbtCompound nbt = bundle.getNbt();
+
+				// BundleItem.ITEMS_KEY = "Items"
+				if (nbt != null && nbt.contains("Items", NbtElement.LIST_TYPE)) {
+					SimpleInventory backing = InventoryUtils.readNbt(nbt, new SimpleInventory(BundleItem.MAX_STORAGE) { // TODO: BundleItem.MAX_STORAGE?
+						@Override
+						public boolean canInsert(ItemStack stack) {
+							if (!stack.isEmpty() && stack.getItem().canBeNested()) {
+								int i = ((BundleItemAccessor) Items.BUNDLE).callGetBundleOccupancy(bundle);
+								int j = ((BundleItemAccessor) Items.BUNDLE).callGetItemOccupancy(stack);
+								int k = Math.min(stack.getCount(), (BundleItem.MAX_STORAGE - i) / j);
+
+								return k != 0;
+							}
+
+							return false;
+						}
+					});
+
+					// TODO: This may not end well
+					backing.addListener((inv) -> {
+						InventoryUtils.writeNbt(nbt, inv);
+					});
+
+					return InventoryStorage.of(backing, null);
+				} else {
+					return null;
+				}
+			},
+			Items.BUNDLE
+		);
+
+		LOOKUP.registerForItems(
+			(shulker, c) -> {
+				NbtCompound nbt = BlockItem.getBlockEntityNbt(shulker);
 
 				if (nbt != null && nbt.contains(ShulkerBoxBlockEntity.ITEMS_KEY, NbtElement.LIST_TYPE)) {
-					SimpleInventory backing = InventoryUtils.readNbt(nbt, ShulkerBoxBlockEntity.INVENTORY_SIZE);
+					SimpleInventory backing = InventoryUtils.readNbt(nbt, new SimpleInventory(ShulkerBoxBlockEntity.INVENTORY_SIZE));
 
 					backing.addListener((inv) -> {
 						InventoryUtils.writeNbt(nbt, inv);
-						BlockItem.setBlockEntityNbt(st, BlockEntityType.SHULKER_BOX, nbt);
 					});
 
 					return InventoryStorage.of(backing, null);

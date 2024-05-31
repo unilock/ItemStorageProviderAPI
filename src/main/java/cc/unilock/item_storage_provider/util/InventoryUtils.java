@@ -10,15 +10,14 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.util.collection.DefaultedList;
 
 public class InventoryUtils {
-	public static SimpleInventory readNbt(NbtCompound nbt, int size) {
-		SimpleInventory inv = new SimpleInventory(size);
+	public static SimpleInventory readNbt(NbtCompound nbt, SimpleInventory inv) {
 		NbtList nbtList = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
 
 		for (int i = 0; i < nbtList.size(); i++) {
 			NbtCompound nbtCompound = nbtList.getCompound(i);
 			int j = nbtCompound.getByte("Slot") & 255;
 
-			if (j < size) {
+			if (j < inv.size()) {
 				inv.setStack(j, ItemStack.fromNbt(nbtCompound));
 			}
 		}

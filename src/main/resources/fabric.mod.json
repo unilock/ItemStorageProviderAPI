@@ -18,6 +18,9 @@
 			"cc.unilock.item_storage_provider.ItemStorageProviderAPI"
 		]
 	},
+	"mixins": [
+		"item_storage_provider.mixins.json"
+	],
 	"depends": {
 		"fabricloader": "*",
 		"minecraft": ">=1.20",
